@@ -117,6 +117,32 @@ If you prefer to run Terraform locally:
 - Progressive, visible commits demonstrating **continuous improvement**
 
 ---
+## Authentication
+
+- This project uses Terraform Cloud dynamic credentials (OIDC) to authenticate to AWS.
+
+- No long-lived AWS access keys are stored in this repository or in Terraform Cloud.
+
+- How it works:
+
+- Terraform Cloud requests a short-lived identity token
+- AWS validates the token via an OIDC provider (app.terraform.io)
+- Terraform Cloud assumes an IAM role in AWS
+- Temporary credentials are issued for each run
+
+- Required AWS setup:
+
+- OIDC Identity Provider: https://app.terraform.io
+- IAM Role with sts:AssumeRoleWithWebIdentity
+- Appropriate permissions (AdministratorAccess for development)
+
+- Terraform Cloud configuration:
+
+- Workspace uses Dynamic AWS Credentials
+- Role ARN is configured in workspace settings
+
+- This approach follows modern security best practices and avoids static credentials.
+---
 
 ## Notes
 - Dataset is **synthetic and HIPAA-safe**.  
