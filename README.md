@@ -125,21 +125,21 @@ If you prefer to run Terraform locally:
 
 - How it works:
 
-- Terraform Cloud requests a short-lived identity token
-- AWS validates the token via an OIDC provider (app.terraform.io)
-- Terraform Cloud assumes an IAM role in AWS
-- Temporary credentials are issued for each run
+   Terraform Cloud requests a short-lived identity token
+   AWS validates the token via an OIDC provider (app.terraform.io)
+   Terraform Cloud assumes an IAM role in AWS
+   Temporary credentials are issued for each run
 
 - Required AWS setup:
 
-- OIDC Identity Provider: https://app.terraform.io
-- IAM Role with sts:AssumeRoleWithWebIdentity
-- Appropriate permissions (AdministratorAccess for development)
+   OIDC Identity Provider: https://app.terraform.io
+   IAM Role with sts:AssumeRoleWithWebIdentity
+   Appropriate permissions (AdministratorAccess for development)
 
 - Terraform Cloud configuration:
 
-- Workspace uses Dynamic AWS Credentials
-- Role ARN is configured in workspace settings
+   Workspace uses Dynamic AWS Credentials
+   Role ARN is configured in workspace settings
 
 - This approach follows modern security best practices and avoids static credentials.
 ---
