@@ -36,10 +36,7 @@ It is intended to align with the skills required for a **Cloud Analytics Infrast
    - `hipaa-aws-analytics-landing-zone-dev` (for development)
    - `hipaa-aws-analytics-landing-zone-prod` (for production)
 2. Connect each workspace to this GitHub repository.
-3. For each workspace, set up AWS credentials as environment variables:
-   - `AWS_ACCESS_KEY_ID`
-   - `AWS_SECRET_ACCESS_KEY`
-   - Optionally, `AWS_DEFAULT_REGION`
+3. *This project uses Terraform Cloud dynamic credentials (OIDC) to authenticate to AWS.
 4. Configure workspace-specific variables in Terraform Cloud or use the provided `.tfvars` files.
 
 ### Environment Management
