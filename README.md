@@ -18,18 +18,73 @@ It is intended to align with the skills required for a **Cloud Analytics Infrast
 
 ## Technologies
 - **Cloud:** AWS (S3, EC2, VPC, CloudWatch)
-- **IaC & Automation:** Terraform, GitHub Actions (CI/CD)
+- **IaC & Automation:** Terraform Cloud, GitHub Actions (CI/CD)
 - **Analytics & ETL:** Python (pandas, boto3), Tableau
 - **Security & Compliance:** IAM roles, S3 encryption (SSE-KMS), CloudTrail logging
 
 ---
 
+## Setup Instructions
+
+### Prerequisites
+- Terraform Cloud account and organization
+- AWS account with appropriate permissions
+- GitHub repository (this one)
+
+### Terraform Cloud Setup
+1. Create two workspaces in Terraform Cloud:
+   - `hipaa-aws-analytics-landing-zone-dev` (for development)
+   - `hipaa-aws-analytics-landing-zone-prod` (for production)
+2. Connect each workspace to this GitHub repository.
+3. For each workspace, set up AWS credentials as environment variables:
+   - `AWS_ACCESS_KEY_ID`
+   - `AWS_SECRET_ACCESS_KEY`
+   - Optionally, `AWS_DEFAULT_REGION`
+4. Configure workspace-specific variables in Terraform Cloud or use the provided `.tfvars` files.
+
+### Environment Management
+- **Dev Environment**: Use `terraform.tfvars.dev` for development settings
+- **Prod Environment**: Use `terraform.tfvars.prod` for production settings (includes additional subnets for HA)
+- Switch between environments using Terraform workspaces: `terraform workspace select dev`
+
+### Local Development (Optional)
+If you prefer to run Terraform locally:
+1. Install Terraform CLI (>= 1.0)
+2. Configure AWS credentials via AWS CLI or environment variables
+3. Create and select workspace: `terraform workspace select dev` or `terraform workspace new prod`
+4. Copy the appropriate tfvars file: `cp terraform.tfvars.dev terraform.tfvars`
+5. Comment out the `backend "remote"` block in `main.tf`
+6. Run `terraform init`, `terraform plan`, `terraform apply`
+
+---
+## Project Structure
+```
+.
+├── main.tf                          # Root Terraform configuration with module calls
+├── variables.tf                     # Input variables
+├── outputs.tf                       # Output values
+├── terraform.tfvars.dev             # Development environment variables
+├── terraform.tfvars.prod            # Production environment variables
+├── modules/
+│   ├── vpc/                         # VPC infrastructure module
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   └── outputs.tf
+│   └── s3/                          # S3 data lake module
+│       ├── main.tf
+│       ├── variables.tf
+│       └── outputs.tf
+├── .gitignore
+└── README.md
+```
+
+---
 ## Stepwise Commit Plan
 
 ### Commit 1 – Base Landing Zone
-- Terraform scripts to create:
-  - VPC, subnets, security groups
-  - Encrypted S3 bucket for storing sample data
+- Modular Terraform scripts to create:
+  - VPC module: VPC, subnets, security groups, NAT gateways
+  - S3 module: Encrypted data lake bucket
 - Initial README with architecture overview and HIPAA notes
 
 ### Commit 2 – Sample Data & ETL
