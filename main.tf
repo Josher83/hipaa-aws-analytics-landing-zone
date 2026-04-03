@@ -43,7 +43,7 @@ module "vpc" {
   vpc_cidr            = var.vpc_cidr
   public_subnet_cidrs = var.public_subnet_cidrs
   private_subnet_cidrs = var.private_subnet_cidrs
-  enable_nat          = terraform.workspace == "prod"
+  enable_nat          = false  # Temporarily disabled to avoid costs
 }
 
 # S3 Module
