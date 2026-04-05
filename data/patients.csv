@@ -1,0 +1,7 @@
+patient_id,first_name,last_name,dob,ssn,diagnosis,admit_date,discharge_date
+1,John,Doe,1980-05-12,123-45-6789,Hypertension,2024-01-10,2024-01-15
+2,Jane,Smith,1990-07-22,987-65-4321,Diabetes,2024-02-15,2024-02-18
+3,Bob,Johnson,1975-03-30,555-66-7777,Asthma,2024-03-20,2024-03-25
+4,Alice,Williams,1985-11-05,222-33-4444,Flu,2024-04-02,2024-04-05
+5,Michael,Brown,1968-09-17,666-77-8888,Heart Disease,2024-05-10,2024-05-20
+6,Emily,Davis,2000-01-25,999-00-1111,Allergy,2024-06-01,2024-06-03
