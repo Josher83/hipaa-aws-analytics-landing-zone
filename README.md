@@ -116,6 +116,11 @@ If you prefer to run Terraform locally:
 - Infrastructure automation and CI/CD pipeline
 - Progressive, visible commits demonstrating **continuous improvement**
 
+## Dataset Loading
+- Terraform uploads files from `data/` into the provisioned data lake bucket during `apply`.
+- Uploaded objects are written under the `raw/` prefix, so `data/patients.csv` becomes `s3://<bucket>/raw/patients.csv`.
+- Changes to local dataset files are detected through object ETags and will be synced on the next Terraform apply.
+
 ---
 ## Authentication
 
