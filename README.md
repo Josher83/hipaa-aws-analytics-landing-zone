@@ -32,36 +32,24 @@ It is intended to align with the skills required for a **Cloud Analytics Infrast
 - GitHub repository (this one)
 
 ### Terraform Cloud Setup
-1. Create two workspaces in Terraform Cloud:
-   - `hipaa-aws-analytics-landing-zone-dev` (for development)
-   - `hipaa-aws-analytics-landing-zone-prod` (for production)
-2. Connect each workspace to this GitHub repository.
-3. *This project uses Terraform Cloud dynamic credentials (OIDC) to authenticate to AWS.
-4. Configure workspace-specific variables in Terraform Cloud or use the provided `.tfvars` files.
+1. Create a single workspace in Terraform Cloud:
+   - `hipaa-aws-analytics-landing-zone`
+2. Connect the workspace to this GitHub repository.
+3. This project uses Terraform Cloud dynamic credentials (OIDC) to authenticate to AWS.
 
-### Environment Management
-- **Dev Environment**: Use `terraform.tfvars.dev` for development settings
-- **Prod Environment**: Use `terraform.tfvars.prod` for production settings (includes additional subnets for HA)
-- Switch between environments using Terraform workspaces: `terraform workspace select dev`
-
-### Local Development (Optional)
-If you prefer to run Terraform locally:
-1. Install Terraform CLI (>= 1.0)
-2. Configure AWS credentials via AWS CLI or environment variables
-3. Create and select workspace: `terraform workspace select dev` or `terraform workspace new prod`
-4. Copy the appropriate tfvars file: `cp terraform.tfvars.dev terraform.tfvars`
-5. Comment out the `backend "remote"` block in `main.tf`
-6. Run `terraform init`, `terraform plan`, `terraform apply`
+### How It Works
+- Push changes to the `main` branch on GitHub
+- Terraform Cloud automatically triggers a plan
+- Review and apply the plan in Terraform Cloud UI
+- All infrastructure runs in the cloud; no local Terraform commands needed
 
 ---
 ## Project Structure
 ```
 .
 ├── main.tf                          # Root Terraform configuration with module calls
-├── variables.tf                     # Input variables
+├── variables.tf                     # Input variables (with defaults)
 ├── outputs.tf                       # Output values
-├── terraform.tfvars.dev             # Development environment variables
-├── terraform.tfvars.prod            # Production environment variables
 ├── modules/
 │   ├── vpc/                         # VPC infrastructure module
 │   │   ├── main.tf
@@ -71,6 +59,8 @@ If you prefer to run Terraform locally:
 │       ├── main.tf
 │       ├── variables.tf
 │       └── outputs.tf
+├── data/                            # Sample healthcare dataset
+│   └── patients.csv
 ├── .gitignore
 └── README.md
 ```

@@ -18,7 +18,7 @@ terraform {
   backend "remote" {
     organization = "Josher_AWS"
     workspaces {
-      name = "hipaa-aws-analytics-landing-zone-dev"
+      name = "hipaa-aws-analytics-landing-zone"
     }
   }
 }
