@@ -1,0 +1,6 @@
+.git
+.terraform
+.vscode
+.idea
+*.tfstate
+*.tfstate.backup

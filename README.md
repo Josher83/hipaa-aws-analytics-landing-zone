@@ -19,7 +19,7 @@ It is intended to align with the skills required for a **Cloud Analytics Infrast
 ## Technologies
 - **Cloud:** AWS (S3, EC2, VPC, CloudWatch)
 - **IaC & Automation:** Terraform Cloud, GitHub Actions (CI/CD)
-- **Analytics & ETL:** Python (pandas, boto3), Tableau
+- **Analytics & ETL:** Python (pandas), Docker, Tableau
 - **Security & Compliance:** IAM roles, S3 encryption (SSE-KMS), CloudTrail logging
 
 ---
@@ -60,7 +60,14 @@ It is intended to align with the skills required for a **Cloud Analytics Infrast
 │       ├── variables.tf
 │       └── outputs.tf
 ├── data/                            # Sample healthcare dataset
-│   └── patients.csv
+│   ├── raw/                         # Source data ingested by ETL
+│   │   └── patients.csv
+│   └── clean/                       # Tableau-ready ETL outputs
+├── etl/
+│   ├── transform.py                 # ETL transform script
+│   └── requirements.txt
+├── Dockerfile
+├── .github/workflows/etl.yml        # GitHub Actions ETL runner (Dockerized)
 ├── .gitignore
 └── README.md
 ```
@@ -82,7 +89,7 @@ It is intended to align with the skills required for a **Cloud Analytics Infrast
 - Update README with ETL workflow
 
 ### Commit 3 – Tableau Dashboard
-- Deploy Tableau (local or EC2)
+- Deploy Tableau (Tableau Cloud or Tableau Server on EC2)
 - Connect to processed data
 - Build a simple dashboard (patient counts, dummy metrics)
 - Include screenshots or workbook in repository
@@ -107,9 +114,31 @@ It is intended to align with the skills required for a **Cloud Analytics Infrast
 - Progressive, visible commits demonstrating **continuous improvement**
 
 ## Dataset Loading
-- Terraform uploads files from `data/` into the provisioned data lake bucket during `apply`.
-- Uploaded objects are written under the `raw/` prefix, so `data/patients.csv` becomes `s3://<bucket>/raw/patients.csv`.
-- Changes to local dataset files are detected through object ETags and will be synced on the next Terraform apply.
+- Terraform uploads files from `data/raw/` and `data/clean/` into the provisioned data lake bucket during `apply`.
+- Files in `data/raw/` are written under the `raw/` prefix.
+- Files in `data/clean/` are written under the `clean/` prefix.
+- Changes to dataset files are detected through object ETags and will be synced on the next Terraform apply.
+
+---
+## ETL Pipeline (Docker, Non-Local)
+
+The ETL job reads source data from `data/raw/patients.csv` and creates Tableau-ready outputs in `data/clean/`.
+All transforms run in GitHub Actions using Docker, not on developer machines.
+
+Outputs:
+- `patients_clean.csv`
+- `diagnosis_summary.csv`
+
+### How ETL Runs
+
+1. Push updates to `data/raw/patients.csv` (or ETL code changes).
+2. GitHub Actions workflow `.github/workflows/etl.yml` builds the Docker image.
+3. The workflow runs ETL in a container and writes outputs to `data/clean/`.
+4. If outputs changed, the workflow commits and pushes updated clean files.
+
+### Manual Trigger
+
+Use GitHub Actions `ETL Pipeline` workflow and click **Run workflow**.
 
 ---
 ## Authentication

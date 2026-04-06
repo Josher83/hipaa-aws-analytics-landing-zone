@@ -1,0 +1,41 @@
+name: ETL Pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - data/raw/**
+      - etl/**
+      - Dockerfile
+      - .github/workflows/etl.yml
+
+permissions:
+  contents: write
+
+jobs:
+  build-transform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build ETL image
+        run: docker build -t hipaa-etl .
+
+      - name: Run ETL transform in container
+        run: docker run --rm -v "$GITHUB_WORKSPACE:/app" hipaa-etl
+
+      - name: Commit generated clean data
+        run: |
+          if git diff --quiet -- data/clean; then
+            echo "No ETL output changes to commit"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/clean
+          git commit -m "Automated ETL: refresh clean Tableau datasets"
+          git push

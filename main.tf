@@ -34,7 +34,8 @@ resource "random_id" "bucket_suffix" {
 
 locals {
   data_lake_bucket_name = "${var.data_lake_bucket_prefix}-${random_id.bucket_suffix.hex}"
-  dataset_files         = fileset("${path.module}/data", "**")
+  raw_dataset_files     = fileset("${path.module}/data/raw", "**")
+  clean_dataset_files   = fileset("${path.module}/data/clean", "**")
 }
 
 # VPC Module
@@ -54,12 +55,22 @@ module "s3" {
   bucket_name = local.data_lake_bucket_name
 }
 
-resource "aws_s3_object" "dataset" {
-  for_each = { for file in local.dataset_files : file => file }
+resource "aws_s3_object" "raw_dataset" {
+  for_each = { for file in local.raw_dataset_files : file => file if endswith(file, ".csv") }
 
   bucket       = module.s3.bucket_name
   key          = "raw/${each.key}"
-  source       = "${path.module}/data/${each.value}"
-  etag         = filemd5("${path.module}/data/${each.value}")
-  content_type = each.value == "patients.csv" ? "text/csv" : null
+  source       = "${path.module}/data/raw/${each.value}"
+  etag         = filemd5("${path.module}/data/raw/${each.value}")
+  content_type = endswith(each.value, ".csv") ? "text/csv" : null
+}
+
+resource "aws_s3_object" "clean_dataset" {
+  for_each = { for file in local.clean_dataset_files : file => file if endswith(file, ".csv") }
+
+  bucket       = module.s3.bucket_name
+  key          = "clean/${each.key}"
+  source       = "${path.module}/data/clean/${each.value}"
+  etag         = filemd5("${path.module}/data/clean/${each.value}")
+  content_type = endswith(each.value, ".csv") ? "text/csv" : null
 }
