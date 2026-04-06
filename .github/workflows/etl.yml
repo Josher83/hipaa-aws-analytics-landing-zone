@@ -29,7 +29,7 @@ jobs:
 
       - name: Commit generated clean data
         run: |
-          if git diff --quiet -- data/clean; then
+          if [ -z "$(git status --porcelain -- data/clean)" ]; then
             echo "No ETL output changes to commit"
             exit 0
           fi
